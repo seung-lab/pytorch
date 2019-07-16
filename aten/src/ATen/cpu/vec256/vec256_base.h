@@ -83,7 +83,7 @@ public:
   static constexpr int size() {
     return 32 / sizeof(T);
   }
-  Vec256() {}
+  Vec256() : values({0}) {}
   Vec256(T val) {
     for (int i = 0; i != size(); i++) {
       values[i] = val;
