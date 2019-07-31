@@ -58,25 +58,15 @@ void div_kernel(TensorIterator& iter) {
       });
     });
   } else {
-    if (iter.dtype() == ScalarType::BFloat16) {
+    AT_DISPATCH_FLOATING_TYPES_AND(kBFloat16, iter.dtype(), "div_cpu", [&]() {
       cpu_kernel_vec(iter,
-        [=](BFloat16 a, BFloat16 b) __ubsan_ignore_float_divide_by_zero__ -> BFloat16 {
+        [=](scalar_t a, scalar_t b) __ubsan_ignore_float_divide_by_zero__ -> scalar_t {
            return a / b;
         },
-        [=](Vec256<BFloat16> a, Vec256<BFloat16> b) {
+        [=](Vec256<scalar_t> a, Vec256<scalar_t> b) {
           return a / b;
         });
-    } else {
-      AT_DISPATCH_FLOATING_TYPES(iter.dtype(), "div_cpu", [&]() {
-        cpu_kernel_vec(iter,
-          [=](scalar_t a, scalar_t b) __ubsan_ignore_float_divide_by_zero__ -> scalar_t {
-             return a / b;
-          },
-          [=](Vec256<scalar_t> a, Vec256<scalar_t> b) {
-            return a / b;
-          });
-      });
-    }
+    });
   }
 }
 

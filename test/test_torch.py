@@ -1740,6 +1740,9 @@ class _TestTorchMixin(object):
                 # bfloat16 has a lower precision so we have to have a separate check for it
                 self.assertEqual(m1 - m2, torch.tensor([1.1016, 2.1094], dtype=dtype))
             else:
+                if (dtype == torch.bool):
+                    self.assertRaises(RuntimeError, lambda: m1 - m2)
+                    continue
                 self.assertEqual(m1 - m2, torch.tensor([1.11, 2.11], dtype=dtype))
 
     def test_csub(self):
